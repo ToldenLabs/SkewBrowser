@@ -12,7 +12,6 @@ if (ENABLE_GUI_TARGETS)
     ladybird_utility(image SOURCES image.cpp LIBS LibGfx LibImageDecoders LibMain)
 endif()
 
-# FIXME: Increase support for building targets on Windows
 if (WIN32)
     return()
 endif()
