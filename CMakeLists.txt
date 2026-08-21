@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
 
-if (VCPKG_TARGET_ANDROID)
-    # If we are building for Android, we must load vcpkg_android.cmake before the project() declaration.
-    # This ensures that the CMAKE_TOOLCHAIN_FILE is set correctly.
-    # (we cannot set CMAKE_TOOLCHAIN_FILE from Gradle, unfortunately, so this is the only place we can do it.)
-    include("UI/Android/vcpkg_android.cmake")
-endif()
-
 # vcpkg flags depend on what linker we are using
 include("Meta/CMake/use_linker.cmake")
 
@@ -86,7 +79,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         message(FATAL_ERROR
             "Fuzzer Sanitizer (-fsanitize=fuzzer) is only supported for Fuzzer targets with LLVM. "
             "Reconfigure CMake with -DCMAKE_C_COMPILER and -DCMAKE_CXX_COMPILER pointing to a clang-based toolchain "
-     "or build binaries without built-in fuzzing support by setting -DENABLE_FUZZERS instead."
+            "or build binaries without built-in fuzzing support by setting -DENABLE_FUZZERS instead."
         )
     endif()
 endif()
@@ -119,10 +112,6 @@ add_lagom_library_install_rules(JSClangPlugin)
 add_subdirectory(AK)
 add_subdirectory(Libraries)
 
-if (ENABLE_FUZZERS)
-    add_subdirectory(Meta/Fuzzers)
-endif()
-
 # No utilities or tests in these configs
 if (NOT (ENABLE_FUZZERS OR ENABLE_COMPILER_EXPLORER_BUILD OR ANDROID OR IOS))
     add_subdirectory(Utilities)
@@ -137,13 +126,3 @@ if (ENABLE_GUI_TARGETS)
     add_subdirectory(Services)
     add_subdirectory(UI)
 endif()
-
-add_custom_target(lint-shell-scripts
-    COMMAND "${ladybird_SOURCE_DIR}/Meta/Linters/lint_shell_scripts.sh"
-    USES_TERMINAL
-)
-
-add_custom_target(check-style
-    COMMAND ${Python3_EXECUTABLE} "${ladybird_SOURCE_DIR}/Meta/Linters/check_style.py"
-    USES_TERMINAL
-)
